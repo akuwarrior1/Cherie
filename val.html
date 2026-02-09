@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffecd2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts background */
+        .heart-bg {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.3;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff4757;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .emoji {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .buttons-container {
+            margin-top: 40px;
+            position: relative;
+            height: 200px;
+        }
+
+        button {
+            font-size: 1.3em;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #dfe4ea, #ced6e0);
+            color: #2f3542;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, calc(-50% + 80px));
+        }
+
+        .success-message {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .success-message h2 {
+            color: #ff4757;
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .success-message p {
+            color: #2f3542;
+            font-size: 1.5em;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4757;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background hearts -->
+    <div class="heart-bg" style="left: 10%; top: 20%;">💕</div>
+    <div class="heart-bg" style="left: 80%; top: 30%; animation-delay: 1s;">❤️</div>
+    <div class="heart-bg" style="left: 15%; top: 70%; animation-delay: 2s;">💖</div>
+    <div class="heart-bg" style="left: 85%; top: 80%; animation-delay: 1.5s;">💗</div>
+    <div class="heart-bg" style="left: 50%; top: 10%; animation-delay: 0.5s;">💝</div>
+
+    <div class="container">
+        <div id="question">
+            <h1>Will You Be My Valentine Cherie Poop?</h1>
+            <div class="emoji">💘</div>
+            <div class="buttons-container">
+                <button id="yesBtn">Yes! 💕</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            <div class="emoji">🎉</div>
+            <h2>Cools Cools!</h2>
+            <p>I knew you'd say yes! 💕</p>
+            <div class="emoji">😊</div>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const question = document.getElementById('question');
+        const successMessage = document.getElementById('successMessage');
+        const container = document.querySelector('.buttons-container');
+
+        let velocityX = 3;
+        let velocityY = 3;
+        let posX = 50;
+        let posY = 50;
+        let animationId;
+
+        function updatePosition() {
+            const btnWidth = yesBtn.offsetWidth;
+            const btnHeight = yesBtn.offsetHeight;
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+
+            posX += velocityX;
+            posY += velocityY;
+
+            // Bounce off walls
+            if (posX <= 0 || posX >= containerWidth - btnWidth) {
+                velocityX = -velocityX;
+                posX = Math.max(0, Math.min(posX, containerWidth - btnWidth));
+            }
+
+            if (posY <= 0 || posY >= containerHeight - btnHeight) {
+                velocityY = -velocityY;
+                posY = Math.max(0, Math.min(posY, containerHeight - btnHeight));
+            }
+
+            yesBtn.style.left = posX + 'px';
+            yesBtn.style.top = posY + 'px';
+            yesBtn.style.transform = 'none';
+
+            animationId = requestAnimationFrame(updatePosition);
+        }
+
+        // Start animation
+        animationId = requestAnimationFrame(updatePosition);
+
+        yesBtn.addEventListener('click', () => {
+            cancelAnimationFrame(animationId);
+            question.style.display = 'none';
+            successMessage.style.display = 'block';
+            
+            // Create confetti
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = ['#ff4757', '#ff6b6b', '#ff85a1', '#ffa502'][Math.floor(Math.random() * 4)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        });
+
+        noBtn.addEventListener('click', () => {
+            // Optional: make the yes button move faster when no is clicked
+            velocityX = velocityX * 1.2;
+            velocityY = velocityY * 1.2;
+        });
+    </script>
+</body>
+</html>
